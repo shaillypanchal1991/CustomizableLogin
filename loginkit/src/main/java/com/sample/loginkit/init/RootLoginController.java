@@ -16,16 +16,16 @@ public class RootLoginController {
     public static CustomConfiguration customConfiguration = new CustomConfiguration();
 
 
-    private RootLoginController() {
+    public RootLoginController() {
         if (instance != null) {
             throw new RuntimeException(
                     "Use getInstance() method to get the single instance of this class.");
         }
     }
 
-/*
-* Double checking that only a single instance of the Root login controller gets called and is thread safe
-* */
+    /*
+     * Double checking that only a single instance of the Root login controller gets called and is thread safe
+     * */
     public static RootLoginController init() {
 
         if (instance == null) {
@@ -61,9 +61,9 @@ public class RootLoginController {
 
     /* To fetch the custom configuration
      */
-    public static CustomConfiguration getCustomConfiguration() {
+   /* public static CustomConfiguration getCustomConfiguration() {
         return customConfiguration;
-    }
+    }*/
 
 
 }
