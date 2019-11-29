@@ -17,10 +17,10 @@ public class RootLoginController {
 
 
     public RootLoginController() {
-        if (instance != null) {
+       /* if (instance != null) {
             throw new RuntimeException(
                     "Use getInstance() method to get the single instance of this class.");
-        }
+        }*/
     }
 
     /*
