@@ -1,7 +1,9 @@
 package com.sample.customizableloginsample.app;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
@@ -68,6 +70,8 @@ public class ShellApplication extends Application {
 
         }
     }
+
+
 
     public static CallbackManager getCommonListener()
     {

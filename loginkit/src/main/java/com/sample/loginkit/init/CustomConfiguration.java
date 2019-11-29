@@ -20,7 +20,7 @@ import java.util.HashMap;
 public class CustomConfiguration {
 
 
-    public String domainURL = "";
+    public String domainURL = "https://usermgt-staging.shared-svc.bellmedia.ca";
     public int retryCount = 2;
     public boolean isLoggingEnable = true;
     public UIComponents uiComponents = new UIComponents();
@@ -50,7 +50,7 @@ public class CustomConfiguration {
 
     public class HTTPErrorMapping {
 
-        public String Error_400 = "Bad Request";
+        public String Error_400 = "User credentials are incorrect";
         public String Error_401 = StringConstants.Error_401;
         public String Error_404 = StringConstants.Error_404;
         public String Error_500 = StringConstants.Error_500;

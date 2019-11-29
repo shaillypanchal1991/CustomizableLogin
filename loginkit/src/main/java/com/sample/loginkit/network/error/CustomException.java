@@ -20,9 +20,10 @@ public class CustomException extends Exception {
             case 401 : return RootLoginController.customConfiguration.httpErrorMapping.Error_401;
             case 500 : return  RootLoginController.customConfiguration.httpErrorMapping.Error_500;
             case 400 : return  RootLoginController.customConfiguration.httpErrorMapping.Error_400;
+             default : return "Unknown Error";
 
         }
-        return "Something went wrong.Please try again later";
+      //  return "Something went wrong.Please try again later";
     }
 
 }

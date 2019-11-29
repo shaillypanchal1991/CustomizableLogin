@@ -31,20 +31,20 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
 
-
         initializeLoginKit();
 
 
-        if(DataStore.getInstance().fetchUserSessionDetails()==null){
+        if (DataStore.getInstance().fetchUserSessionDetails() == null) {
 
             Intent i = new Intent(SplashActivity.this, LoginActivity.class);
             startActivity(i);
+            finish();
 
-        }
-        else{
+        } else {
 
             Intent i = new Intent(SplashActivity.this, ProfilesActivity.class);
             startActivity(i);
+            finish();
 
         }
 

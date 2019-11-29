@@ -79,13 +79,15 @@ public class DataStore {
     }
 
 
-    public void cacheProfileDetails(DataWrapper profileData) {
+    public void cacheProfileDetails(List<Profile> profileData) {
 
 
-        _profileList = (List<Profile>) profileData.getData();
+        _profileList = profileData;
 
 
     }
+
+
 
     public List<Profile> get_profileList() {
         return _profileList;

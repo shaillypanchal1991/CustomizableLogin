@@ -9,10 +9,15 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.service.autofill.Dataset;
 import android.text.InputType;
 import android.util.TypedValue;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.sample.customizableloginsample.R;
 import com.sample.customizableloginsample.adapters.ProfileRecyclerViewAdapter;
@@ -21,11 +26,15 @@ import com.sample.customizableloginsample.databinding.ActivityProfilesBinding;
 import com.sample.customizableloginsample.storage.DataStore;
 import com.sample.customizableloginsample.utils.AutoFitGridLayoutManager;
 import com.sample.customizableloginsample.utils.GridItemSpacingDecorator;
+import com.sample.customizableloginsample.utils.NetworkUtils;
+import com.sample.loginkit.analytics.AnalyticsServiceManager;
 import com.sample.loginkit.listeners.CallbackHelper;
 import com.sample.loginkit.models.Login;
 import com.sample.loginkit.models.Profile;
+import com.sample.loginkit.network.apiUtils.DataRepository;
 import com.sample.loginkit.network.error.CustomException;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class ProfilesActivity extends AppCompatActivity implements CallbackHelper.GenericCallbacks, ProfileRecyclerViewAdapter.profileClickListener {
@@ -33,7 +42,13 @@ public class ProfilesActivity extends AppCompatActivity implements CallbackHelpe
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        getWindow().setStatusBarColor(Color.WHITE);
         super.onCreate(savedInstanceState);
+
 
         binding = DataBindingUtil.setContentView(ProfilesActivity.this, R.layout.activity_profiles);
         binding.setLifecycleOwner(this);
@@ -47,20 +62,24 @@ public class ProfilesActivity extends AppCompatActivity implements CallbackHelpe
         binding.recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         makeProfilesRequest();
-       // ShellApplication.getCommonListener().loadProfiles(this, "Profiles", DataStore.getInstance().fetchUserSessionDetails().getAccessToken());
 
 
     }
 
-    public  void makeProfilesRequest(){
-        ShellApplication.getCommonListener().loadProfiles(this, "Profiles", DataStore.getInstance().fetchUserSessionDetails().getAccessToken());
+    public void makeProfilesRequest() {
 
+        if (NetworkUtils.isNetworkConnected(this)) {
+            ShellApplication.getCommonListener().loadProfiles(this, "Profiles", DataStore.getInstance().fetchUserSessionDetails().getAccessToken());
 
+        } else {
+            Toast.makeText(this, "You are not connected to internet.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void populateData(List<Profile> profiles) {
 
 
+        DataStore.getInstance().cacheProfileDetails(profiles);
         ProfileRecyclerViewAdapter profileRecyclerViewAdapter = new ProfileRecyclerViewAdapter(profiles, ProfilesActivity.this);
 
         binding.setProfileViewAdapter(profileRecyclerViewAdapter);
@@ -112,9 +131,11 @@ public class ProfilesActivity extends AppCompatActivity implements CallbackHelpe
     public void loginwithProfileID(Profile profile, int pin) {
         //LogUtils.debug(TAG, "Profile Nick Name : " + profile.getNickname());
 
-
-        ShellApplication.getCommonListener().loginWithProfile(this,"ProfileLogin","password", DataStore.getInstance().fetchUserName(), DataStore.getInstance().fetchPassword(), profile.getId(), pin) ;
-
+        if (NetworkUtils.isNetworkConnected(this)) {
+            ShellApplication.getCommonListener().loginWithProfile(this, "ProfileLogin", "password", DataStore.getInstance().fetchUserName(), DataStore.getInstance().fetchPassword(), profile.getId(), pin);
+        } else {
+            Toast.makeText(this, "You are not connected to internet ", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
@@ -137,33 +158,65 @@ public class ProfilesActivity extends AppCompatActivity implements CallbackHelpe
     @Override
     public void onProfileFailure(CustomException apiException) {
 
-
-        ShellApplication.getCommonListener().refreshToken(this,"RefreshToken",DataStore.getInstance().fetchUserSessionDetails().getRefreshToken());
-
+        if (NetworkUtils.isNetworkConnected(this)) {
+            ShellApplication.getCommonListener().refreshToken(this, "RefreshToken", DataStore.getInstance().fetchUserSessionDetails().getRefreshToken());
+        } else {
+            Toast.makeText(this, "You are not connected to internet ", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     public void onProfileLoginSuccess(Login data) {
+
         Intent in = new Intent(ProfilesActivity.this, HomeActivity.class);
         startActivity(in);
+
+
+        HashMap<String,String> eventParams = new HashMap<String,String>();
+        eventParams.put("username", DataStore.getInstance().fetchUserName());
+        eventParams.put("isRememberMe",String.valueOf(DataStore.getInstance().fetchRememberMe()));
+        eventParams.put("isProfile","true");
+        eventParams.put("responseObject",data.toString());
+        AnalyticsServiceManager.getInstance().pushAnalyticsEvent("login_success",eventParams);
+
+        finish();
     }
 
 
     @Override
     public void onProfileLoginFailure(CustomException apiException) {
+        HashMap<String,String> eventParams = new HashMap<String,String>();
+        eventParams.put("username", DataStore.getInstance().fetchUserName());
+        eventParams.put("isRememberMe",String.valueOf(DataStore.getInstance().fetchRememberMe()));
+        eventParams.put("isProfile","true");
+        eventParams.put("errorResponse",apiException.getErrorCode() +"");
+        AnalyticsServiceManager.getInstance().pushAnalyticsEvent("login_failure",eventParams);
 
+        Toast.makeText(this,"Unable to fetch profiles",Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onRefreshTokenFailure(CustomException apiException) {
 
+        Toast.makeText(this,"There seems to be some error",Toast.LENGTH_SHORT).show();
+        HashMap<String,String> eventParams = new HashMap<String,String>();
+        eventParams.put("username", DataStore.getInstance().fetchUserName());
+        eventParams.put("error", apiException.getErrorMessage(apiException.getErrorCode()));
+
+        AnalyticsServiceManager.getInstance().pushAnalyticsEvent("refresh_session_failure",eventParams);
 
     }
 
     @Override
     public void onRefreshTokenSucess(Login data) {
+
         DataStore.getInstance().storeUserSessionDetails(data);
-      makeProfilesRequest();
+        makeProfilesRequest();
+
+
+        HashMap<String,String> eventParams = new HashMap<String,String>();
+        eventParams.put("username", DataStore.getInstance().fetchUserName());
+        AnalyticsServiceManager.getInstance().pushAnalyticsEvent("refresh_session_success",eventParams);
 
 
     }

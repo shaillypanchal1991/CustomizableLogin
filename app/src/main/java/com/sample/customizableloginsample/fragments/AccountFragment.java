@@ -17,11 +17,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.sample.customizableloginsample.R;
 import com.sample.customizableloginsample.adapters.ProfileRecyclerViewAdapter;
+import com.sample.customizableloginsample.storage.DataStore;
 import com.sample.customizableloginsample.utils.GridItemSpacingDecorator;
 import com.sample.loginkit.models.Profile;
 
 import com.sample.loginkit.network.apiUtils.DataRepository;
-
 
 
 import java.util.List;
@@ -34,8 +34,9 @@ public class AccountFragment extends Fragment implements ProfileRecyclerViewAdap
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_account, container, false);
-        //profiles = DataRepository.getInstance().get_profileList();
+        profiles = DataStore.getInstance().get_profileList();
         _profileRecyclerview = (RecyclerView) view.findViewById(R.id.profileRecyclerView);
 
 
@@ -45,17 +46,18 @@ public class AccountFragment extends Fragment implements ProfileRecyclerViewAdap
         _profileRecyclerview.setItemAnimator(new DefaultItemAnimator());
 
         populateData(profiles);
-        Log.e("profiles", "profiles" + profiles.size());
+        //Log.e("profiles", "profiles" + profiles.size());
 
         return view;
     }
 
     private void populateData(List<Profile> profiles) {
 
+        if (profiles.size() > 0) {
+            ProfileRecyclerViewAdapter profileRecyclerViewAdapter = new ProfileRecyclerViewAdapter(profiles, this);
 
-        ProfileRecyclerViewAdapter profileRecyclerViewAdapter = new ProfileRecyclerViewAdapter(profiles, this);
-
-        _profileRecyclerview.setAdapter(profileRecyclerViewAdapter);
+            _profileRecyclerview.setAdapter(profileRecyclerViewAdapter);
+        }
 
 
     }
@@ -71,4 +73,6 @@ public class AccountFragment extends Fragment implements ProfileRecyclerViewAdap
     public void onProfileClicked(Profile profile) {
 
     }
+
+
 }

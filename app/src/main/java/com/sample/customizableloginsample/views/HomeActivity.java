@@ -119,8 +119,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         transaction.commit();
     }
 
+    @Override
+    public void onBackPressed() {
+       // super.onBackPressed();
+    }
 
-    /*@Override
+/*@Override
     public void pushEvent(String name, HashMap<String, String> eventProperties) {
         LogUtils.debug(TAG, "Analytics Event : " + name + " Params :" + eventProperties.toString());
     }*/
