@@ -1,6 +1,8 @@
 package com.sample.loginkit.listeners;
 
 
+import com.sample.loginkit.utils.RequestType;
+
 /*
 The class is to be used by the shell app to directly call APIs like login ,getProfiles etc.
 User just need to send parameters for appropriate APIs
@@ -18,7 +20,7 @@ public class CallbackManager {
 eg :  ShellApplication.getCommonListener().loginwithCredentials(this, "Login",binding.editTextEmail.getText().toString(), binding.editTextPassword.getText().toString());
 
      */
-    public void loginwithCredentials(CallbackHelper.GenericCallbacks genericCallbacks, String requestType, String username, String password) {
+    public void loginwithCredentials(CallbackHelper.GenericCallbacks genericCallbacks, RequestType requestType, String username, String password) {
 
         new CallbackHelper().loginwithCredentials(requestType, genericCallbacks, username, password);
 
@@ -27,7 +29,7 @@ eg :  ShellApplication.getCommonListener().loginwithCredentials(this, "Login",bi
     /*
      * For fetching profiles of the user
      * */
-    public void loadProfiles(CallbackHelper.GenericCallbacks genericCallbacks, String requestType, String accessToken) {
+    public void loadProfiles(CallbackHelper.GenericCallbacks genericCallbacks, RequestType requestType, String accessToken) {
 
 
         new CallbackHelper().loadProfiles(requestType, genericCallbacks, accessToken);
@@ -38,7 +40,7 @@ eg :  ShellApplication.getCommonListener().loginwithCredentials(this, "Login",bi
     /*
      * When a profile is clicked
      * */
-    public void loginWithProfile(CallbackHelper.GenericCallbacks genericCallbacks, String requestType, String granttype, String username, String password, String profileid, int pin) {
+    public void loginWithProfile(CallbackHelper.GenericCallbacks genericCallbacks, RequestType requestType, String granttype, String username, String password, String profileid, int pin) {
 
 
         new CallbackHelper().loginWithProfile(requestType, genericCallbacks, granttype, username, password, profileid, pin);
@@ -48,7 +50,7 @@ eg :  ShellApplication.getCommonListener().loginwithCredentials(this, "Login",bi
     /* When profileFailure() is invoked , call refreshToken() and then reinvoke the getProfiles API
 
      */
-    public void refreshToken(CallbackHelper.GenericCallbacks genericCallbacks, String requestType, String refreshToken) {
+    public void refreshToken(CallbackHelper.GenericCallbacks genericCallbacks, RequestType requestType, String refreshToken) {
         new CallbackHelper().refreshToken(requestType, genericCallbacks, refreshToken);
     }
 

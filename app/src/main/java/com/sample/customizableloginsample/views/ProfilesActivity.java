@@ -33,6 +33,7 @@ import com.sample.loginkit.models.Login;
 import com.sample.loginkit.models.Profile;
 import com.sample.loginkit.network.apiUtils.DataRepository;
 import com.sample.loginkit.network.error.CustomException;
+import com.sample.loginkit.utils.RequestType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -69,7 +70,7 @@ public class ProfilesActivity extends AppCompatActivity implements CallbackHelpe
     public void makeProfilesRequest() {
 
         if (NetworkUtils.isNetworkConnected(this)) {
-            ShellApplication.getCommonListener().loadProfiles(this, "Profiles", DataStore.getInstance().fetchUserSessionDetails().getAccessToken());
+            ShellApplication.getCommonListener().loadProfiles(this, RequestType.LOAD_PROFILES, DataStore.getInstance().fetchUserSessionDetails().getAccessToken());
 
         } else {
             Toast.makeText(this, "You are not connected to internet.", Toast.LENGTH_SHORT).show();
@@ -132,7 +133,7 @@ public class ProfilesActivity extends AppCompatActivity implements CallbackHelpe
         //LogUtils.debug(TAG, "Profile Nick Name : " + profile.getNickname());
 
         if (NetworkUtils.isNetworkConnected(this)) {
-            ShellApplication.getCommonListener().loginWithProfile(this, "ProfileLogin", "password", DataStore.getInstance().fetchUserName(), DataStore.getInstance().fetchPassword(), profile.getId(), pin);
+            ShellApplication.getCommonListener().loginWithProfile(this, RequestType.LOGIN_WTH_PROFILE_ID, "password", DataStore.getInstance().fetchUserName(), DataStore.getInstance().fetchPassword(), profile.getId(), pin);
         } else {
             Toast.makeText(this, "You are not connected to internet ", Toast.LENGTH_SHORT).show();
         }
@@ -159,7 +160,7 @@ public class ProfilesActivity extends AppCompatActivity implements CallbackHelpe
     public void onProfileFailure(CustomException apiException) {
 
         if (NetworkUtils.isNetworkConnected(this)) {
-            ShellApplication.getCommonListener().refreshToken(this, "RefreshToken", DataStore.getInstance().fetchUserSessionDetails().getRefreshToken());
+            ShellApplication.getCommonListener().refreshToken(this, RequestType.REFRESH_TOKEN, DataStore.getInstance().fetchUserSessionDetails().getRefreshToken());
         } else {
             Toast.makeText(this, "You are not connected to internet ", Toast.LENGTH_SHORT).show();
         }

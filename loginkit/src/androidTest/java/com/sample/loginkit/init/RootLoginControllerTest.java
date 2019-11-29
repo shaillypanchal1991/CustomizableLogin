@@ -10,9 +10,10 @@ import static org.junit.Assert.assertNotEquals;
 public class RootLoginControllerTest {
 
     @Test
-    public void loadLoginKit(Context context, RootLoginController rootLoginController) {
+    public void loadLoginKit() {
 
 
+        RootLoginController rootLoginController= new RootLoginController();
         assertEquals("https://usermgt-staging.shared-svc.bellmedia.ca", rootLoginController.customConfiguration.domainURL);
         assertNotEquals(null, rootLoginController.customConfiguration.domainURL);
         assertNotEquals("", rootLoginController.customConfiguration.domainURL);

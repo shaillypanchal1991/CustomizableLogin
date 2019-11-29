@@ -19,11 +19,11 @@ import com.sample.customizableloginsample.databinding.ActivityLoginBinding;
 import com.sample.customizableloginsample.storage.DataStore;
 import com.sample.customizableloginsample.utils.NetworkUtils;
 import com.sample.loginkit.analytics.AnalyticsServiceManager;
-import com.sample.loginkit.init.RootLoginController;
 import com.sample.loginkit.listeners.CallbackHelper;
 import com.sample.loginkit.models.Login;
 import com.sample.loginkit.models.Profile;
 import com.sample.loginkit.network.error.CustomException;
+import com.sample.loginkit.utils.RequestType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -128,7 +128,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
 
         if (NetworkUtils.isNetworkConnected(this)) {
-            ShellApplication.getCommonListener().loginwithCredentials(this, "Login", binding.editTextEmail.getText().toString(), binding.editTextPassword.getText().toString());
+            ShellApplication.getCommonListener().loginwithCredentials(this, RequestType.LOGIN_WITH_CREDENTIALS, binding.editTextEmail.getText().toString(), binding.editTextPassword.getText().toString());
             HashMap<String,String> eventParams = new HashMap<String,String>();
             eventParams.put("username", binding.editTextEmail.getText().toString());
             eventParams.put("isRememberMe",String.valueOf(binding.checkBoxRememberMe.isChecked()));
